@@ -1,5 +1,5 @@
-import { getRandomNumber, getRandomArrayElement } from './util.js'
-import { DESCRIPTIONS } from './data.js'
+import { getRandomNumber, getRandomArrayElement } from './util.js';
+import { DESCRIPTIONS } from './data.js';
 import { generateComments } from './comments.js';
 
 // Генерация данных для одной фотографии
@@ -22,4 +22,4 @@ function generatePhotosData(count) {
   return photos;
 }
 
-export { generatePhotosData }
+export { generatePhotosData };

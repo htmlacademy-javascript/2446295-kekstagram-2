@@ -1,5 +1,5 @@
-import { getRandomNumber, getRandomArrayElement, generateUniqueId } from './util.js'
-import { NAMES, MESSAGES } from './data.js'
+import { getRandomNumber, getRandomArrayElement, generateUniqueId } from './util.js';
+import { NAMES, MESSAGES } from './data.js';
 
 // Генерация случайного комментария
 function generateComment() {
@@ -21,4 +21,4 @@ function generateComments() {
   return comments;
 }
 
-export { generateComments }
+export { generateComments };
