@@ -27,7 +27,7 @@ function extractNumbers(input) {
 
   for (let char of input) {
     if (!isNaN(parseInt(char))) { // Проверяем, является ли символ числом
-      extractedNumbers += char;   // Добавляем числовой символ к результату
+      extractedNumbers += char; // Добавляем числовой символ к результату
     }
   }
 
@@ -37,4 +37,9 @@ function extractNumbers(input) {
   }
 
   return parseInt(extractedNumbers); // Преобразуем строку чисел в число
+}
+
+function parseTime(time) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
 }
