@@ -4,4 +4,3 @@ document.addEventListener('DOMContentLoaded', () => {
   const photosData = generatePhotosData(25);
   console.log(photosData);
 })
-
