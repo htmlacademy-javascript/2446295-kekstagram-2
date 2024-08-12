@@ -38,3 +38,8 @@ function extractNumbers(input) {
 
   return parseInt(extractedNumbers); // Преобразуем строку чисел в число
 }
+
+function parseTime(time) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
