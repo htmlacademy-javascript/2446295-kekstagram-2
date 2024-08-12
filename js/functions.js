@@ -27,7 +27,7 @@ function extractNumbers(input) {
 
   for (let char of input) {
     if (!isNaN(parseInt(char))) { // Проверяем, является ли символ числом
-      extractedNumbers += char;   // Добавляем числовой символ к результату
+      extractedNumbers += char; // Добавляем числовой символ к результату
     }
   }
 
