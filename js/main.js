@@ -1,3 +1,4 @@
+
 import { generatePhotosData } from './photosRender.js';
 
 document.addEventListener('DOMContentLoaded', () => {
