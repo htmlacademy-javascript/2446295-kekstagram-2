@@ -44,12 +44,6 @@ function parseTime(time) {
   return hours * 60 + minutes;
 }
 
-// Определение функции parseTime
-function parseTime(time) {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours * 60 + minutes;
-}
-
 // Определение функции isMeetingWithinWorkHours
 function isMeetingWithinWorkHours(startWorkDay, endWorkDay, startMeeting, meetingDuration) {
   const startWorkMinutes = parseTime(startWorkDay);

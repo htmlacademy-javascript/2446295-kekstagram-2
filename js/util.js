@@ -1,17 +1,18 @@
-// Генерация случайного числа в диапазоне от min до max
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const getId = () => {
+  let lastGeneratedId = 0;
+  return function () {
+    lastGeneratedId += 1;
+    return lastGeneratedId;
+  };
+};
 
-// Выбор случайного элемента из массива
-function getRandomArrayElement(arr) {
-  return arr[getRandomNumber(0, arr.length - 1)];
-}
+const getRandomInteger = (min, max) => {
+  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
+  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
 
-// Генерация уникального идентификатора
-const generateUniqueId = (() => {
-  let id = 0;
-  return () => ++id;
-})();
+const getRandomArrayElement = (items) => items[getRandomInteger(0, items.length - 1)];
 
-export { getRandomNumber, getRandomArrayElement, generateUniqueId };
+export {getId, getRandomInteger, getRandomArrayElement};
