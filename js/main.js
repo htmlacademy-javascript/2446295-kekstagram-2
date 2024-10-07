@@ -1,7 +1,6 @@
+import {getPhotos} from './data.js';
+import {createThumbnails} from './thumbnails.js';
 
-import { generatePhotosData } from './photosRender.js';
+const photos = getPhotos();
 
-document.addEventListener('DOMContentLoaded', () => {
-  const photosData = generatePhotosData(25);
-  console.log(photosData);
-})
+createThumbnails(photos);
