@@ -1,23 +1,31 @@
+import { openBigPicture } from './big-picture.js';
+
 const thumbnailListElement = document.querySelector('.pictures');
 const thumbnailTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
 const fragment = document.createDocumentFragment();
 
 const createThumbnails = (photos) => {
-  photos.forEach(({url, description, likes, comments}) => {
+  photos.forEach((photo) => {
+    const { url, description, likes, comments } = photo;
     const thumbnailElement = thumbnailTemplate.cloneNode(true);
     const thumbnailImage = thumbnailElement.querySelector('.picture__img');
     thumbnailImage.src = url;
     thumbnailImage.alt = description;
     thumbnailElement.querySelector('.picture__likes').textContent = likes;
     thumbnailElement.querySelector('.picture__comments').textContent = comments.length;
+
+    // Добавляем обработчик клика на миниатюру
+    thumbnailElement.addEventListener('click', () => {
+      openBigPicture({ url, likes, comments, description });
+    });
+
     fragment.append(thumbnailElement);
   });
-  return thumbnailListElement.append(fragment);
+  thumbnailListElement.append(fragment);
 };
 
-export {createThumbnails};
-
+export { createThumbnails };
 // Заведите модуль, который будет отвечать за отрисовку миниатюр.
 
 // На основе временных данных для разработки и шаблона #picture создайте DOM-элементы, соответствующие фотографиям, и заполните их данными:
