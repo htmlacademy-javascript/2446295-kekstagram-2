@@ -31,8 +31,8 @@ const showError = (message) => {
   };
   document.addEventListener('keydown', onEscPress);
 
-  // Автоматическое удаление через 5 секунд
-  setTimeout(removeErrorMessage, 5000);
+  // Автоматическое удаление через 4 секунды
+  setTimeout(removeErrorMessage, 4000);
 };
 
 export { showError };
