@@ -1,3 +1,6 @@
+const HASHTAG_PATTERN = /^#[a-zа-яё0-9]{1,19}$/; // Паттерн: # + 1-19 букв или цифр
+const DRSCRIPTION_MAX_LENGTH = 140;
+
 // Получаем ссылки на элементы формы и её полей
 const form = document.querySelector('#upload-select-image');
 const uploadFileInput = document.querySelector('#upload-file');
@@ -67,18 +70,15 @@ const validateHashtags = (value) => {
     return false;
   } // Не более 5 хэштегов
 
-  const hashtagPattern = /^#[a-zа-яё0-9]{1,19}$/; // Паттерн: # + 1-19 букв или цифр
-
   const uniqueHashtags = new Set(hashtags); // Проверка на уникальность
 
   // Проверяем каждый хэштег на соответствие паттерну и уникальность
-  return hashtags.every(tag => hashtagPattern.test(tag)) && uniqueHashtags.size === hashtags.length;
+  return hashtags.every(tag => HASHTAG_PATTERN.test(tag)) && uniqueHashtags.size === hashtags.length;
 };
 
 // Функция для валидации комментария
-const validateComment = (value) => {
-  return value.length <= 140; // Ограничение на длину комментария
-};
+const validateComment = (value) => value.length <= DRSCRIPTION_MAX_LENGTH; // Ограничение на длину комментария
+
 
 // Добавляем кастомные валидации для хэштегов и комментариев
 pristine.addValidator(

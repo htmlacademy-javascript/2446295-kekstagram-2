@@ -1,3 +1,5 @@
+import { removeEscapeControl, setEscapeControl } from "./escape-control.js";
+
 // Найдем элементы для работы с полноразмерным изображением и комментариями
 const bigPictureElement = document.querySelector('.big-picture');
 const commentsList = bigPictureElement.querySelector('.social__comments');
@@ -79,36 +81,34 @@ const openBigPicture = ({ url, likes, comments: newComments, description }) => {
   document.body.classList.add('modal-open');
 
   // Добавляем обработчики событий
-  closeButton.addEventListener('click', closeBigPicture); // Закрытие по кнопке
+  closeButton.addEventListener('click', onCloseButtonClick); // Закрытие по кнопке
   commentsLoader.addEventListener('click', renderComments); // Загрузка комментариев
-  document.addEventListener('keydown', onEscPress); // Закрытие по Esc
   bigPictureElement.addEventListener('click', onOutsideClick); // Закрытие по клику вне модалки
+
+  setEscapeControl(closeBigPicture);
 };
 
+function onCloseButtonClick(){
+  closeBigPicture();
+  removeEscapeControl();
+}
+
 // Функция для закрытия полноразмерного изображения
-const closeBigPicture = () => {
+function closeBigPicture(){
   bigPictureElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
   // Убираем обработчики
   closeButton.removeEventListener('click', closeBigPicture);
   commentsLoader.removeEventListener('click', renderComments);
-  document.removeEventListener('keydown', onEscPress);
   bigPictureElement.removeEventListener('click', onOutsideClick);
 };
 
-// Обработчик для нажатия клавиши Esc
-const onEscPress = (evt) => {
-  if ((evt.keyCode === 27)) {
-    closeBigPicture();
-  }
-};
-
-// Обработчик для клика вне модального окна
 const onOutsideClick = (evt) => {
   // Если кликнули не по модальной части, закрываем окно
   if (!bigPictureOverlay.contains(evt.target)) {
     closeBigPicture();
+    removeEscapeControl();
   }
 };
 

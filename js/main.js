@@ -1,10 +1,10 @@
 import { getData } from './api.js';
-import { createThumbnails, renderPhotos } from './thumbnails.js';
+import { createThumbnails } from './thumbnails.js';
 import './form.js';
 import './validateForm.js';
 import './imageEdit.js';
-import { showError } from './error.js';
 import { showFilters, onFilterChange } from './filters.js';
+import { showAlert } from './util.js';
 
 // Получение и отображение фотографий с сервера
 getData()
@@ -17,5 +17,5 @@ getData()
     filtersForm.addEventListener('click', (evt) => onFilterChange(evt, photos));
   })
   .catch((error) => {
-    showError('Ошибка при загрузке данных: ' + error.message);
+    showAlert()
   });

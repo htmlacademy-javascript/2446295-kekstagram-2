@@ -16,7 +16,7 @@ const getData = async () => {
 // Функция для отправки данных
 const sendData = async (data) => {
   try {
-    const response = await fetch(SERVER_URL, {
+    const response = await fetch(`${SERVER_URL}`, {
       method: 'POST',
       body: data,
     });
