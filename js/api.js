@@ -1,6 +1,5 @@
-const SERVER_URL = 'https://31.javascript.htmlacademy.pro/kekstagram';
+import { SERVER_URL } from './constants.js';
 
-// Функция для получения данных
 const getData = async () => {
   try {
     const response = await fetch(`${SERVER_URL}/data`);
@@ -9,14 +8,13 @@ const getData = async () => {
     }
     return await response.json();
   } catch (error) {
-    throw new Error('Ошибка при загрузке данных: ' + error.message);
+    throw new Error(`Ошибка при загрузке данных: ${error.message}`);
   }
 };
 
-// Функция для отправки данных
 const sendData = async (data) => {
   try {
-    const response = await fetch(SERVER_URL, {
+    const response = await fetch(`${SERVER_URL}`, {
       method: 'POST',
       body: data,
     });
@@ -25,7 +23,7 @@ const sendData = async (data) => {
     }
     return response;
   } catch (error) {
-    throw new Error('Ошибка при отправке данных: ' + error.message);
+    throw new Error(`Ошибка при отправке данных: ${error.message}`);
   }
 };
 

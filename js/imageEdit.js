@@ -1,39 +1,32 @@
-// Получаем ссылки на необходимые элементы
-const scaleControlSmaller = document.querySelector('.scale__control--smaller');
-const scaleControlBigger = document.querySelector('.scale__control--bigger');
-const scaleValue = document.querySelector('.scale__control--value');
+import { EffectsSettings, Effects } from './constants.js';
+
 const imgPreview = document.querySelector('.img-upload__preview img');
-
-// Устанавливаем начальные значения
-let currentScale = 100; // по умолчанию 100%
-
-// Функция для обновления масштаба изображения
-const updateScale = () => {
-  imgPreview.style.transform = `scale(${currentScale / 100})`;
-  scaleValue.value = `${currentScale}%`;
-};
-
-// Обработчики событий для кнопок масштабирования
-scaleControlSmaller.addEventListener('click', () => {
-  if (currentScale > 25) {
-    currentScale -= 25;
-    updateScale();
-  }
-});
-
-scaleControlBigger.addEventListener('click', () => {
-  if (currentScale < 100) {
-    currentScale += 25;
-    updateScale();
-  }
-});
-
-// Настройка noUiSlider
+const uploadFileInput = document.querySelector('#upload-file');
+const imgUploadOverlay = document.querySelector('.img-upload__overlay');
+const effectsPreviews = document.querySelectorAll('.effects__preview'); // Все превью для эффектов
+const effects = document.querySelector('.effects');
+const sliderContainer = document.querySelector('.effect-level');
 const effectLevelSlider = document.querySelector('.effect-level__slider');
 const effectLevelValue = document.querySelector('.effect-level__value');
-const imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
 
-// Инициализация noUiSlider
+let currentEffect = Effects.DEFAULT;
+const updateEffectsPreviews = (imageSrc) => {
+  effectsPreviews.forEach((preview) => {
+    preview.style.backgroundImage = `url(${imageSrc})`;
+    preview.style.backgroundSize = 'cover';
+  });
+};
+
+uploadFileInput.addEventListener('change', (evt) => {
+  const file = evt.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const imageSrc = URL.createObjectURL(file);
+    imgPreview.src = imageSrc;
+    updateEffectsPreviews(imageSrc);
+    imgUploadOverlay.classList.remove('hidden');
+  }
+});
+
 noUiSlider.create(effectLevelSlider, {
   range: {
     min: 0,
@@ -42,98 +35,58 @@ noUiSlider.create(effectLevelSlider, {
   start: 1,
   step: 0.1,
   connect: 'lower',
+  format: {
+    to: function (value) {
+      return parseFloat(value);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  }
 });
 
-// Функция для применения эффекта
-const applyEffect = (effect) => {
-  imgPreview.style.filter = '';
-  effectLevelSlider.noUiSlider.set(1); // сбросить слайдер
-  effectLevelValue.value = 1; // Сбрасываем значение эффекта в скрытое поле
-
-  switch (effect) {
-    case 'chrome':
-      imgPreview.style.filter = 'grayscale(0)';
-      effectLevelSlider.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 1,
-        },
-      });
-      break;
-    case 'sepia':
-      imgPreview.style.filter = 'sepia(0)';
-      effectLevelSlider.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 1,
-        },
-      });
-      break;
-    case 'marvin':
-      imgPreview.style.filter = 'invert(0)';
-      effectLevelSlider.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 100,
-        },
-      });
-      break;
-    case 'phobos':
-      imgPreview.style.filter = 'blur(0px)';
-      effectLevelSlider.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 3,
-        },
-      });
-      break;
-    case 'heat':
-      imgPreview.style.filter = 'brightness(1)';
-      effectLevelSlider.noUiSlider.updateOptions({
-        range: {
-          min: 1,
-          max: 3,
-        },
-      });
-      break;
-    case 'original':
-      imgUploadEffectLevel.classList.add('hidden');
-      return; // Выход из функции, если эффект оригинал
+effectLevelSlider.noUiSlider.on('update', () => {
+  if (currentEffect !== Effects.DEFAULT) {
+    const { STYLE, UNITS } = EffectsSettings[currentEffect];
+    effectLevelValue.value = effectLevelSlider.noUiSlider.get();
+    imgPreview.style.filter = `${STYLE}(${effectLevelValue.value}${UNITS})`;
   }
-  imgUploadEffectLevel.classList.remove('hidden');
+});
+
+const updateSlider = () => {
+  const { MIN, MAX, STEP } = EffectsSettings[currentEffect];
+  effectLevelSlider.noUiSlider.updateOptions({
+    range: {
+      min: MIN,
+      max: MAX,
+    },
+    step: STEP,
+    start: MAX
+  });
 };
 
-// Обработчик изменения уровня эффекта
-effectLevelSlider.noUiSlider.on('update', (values) => {
-  const value = parseFloat(values[0]);
+const showSlider = (isVisible = true) => {
+  if (isVisible) {
+    sliderContainer.classList.remove('hidden');
+  } else {
+    sliderContainer.classList.add('hidden');
+  }
+};
 
-  switch (document.querySelector('input[name="effect"]:checked').value) {
-    case 'chrome':
-      imgPreview.style.filter = `grayscale(${value})`;
-      break;
-    case 'sepia':
-      imgPreview.style.filter = `sepia(${value})`;
-      break;
-    case 'marvin':
-      imgPreview.style.filter = `invert(${value}%)`;
-      break;
-    case 'phobos':
-      imgPreview.style.filter = `blur(${value}px)`;
-      break;
-    case 'heat':
-      imgPreview.style.filter = `brightness(${value})`;
-      break;
-    default:
-      imgPreview.style.filter = '';
+export const resetEffects = () => {
+  showSlider(false);
+  imgPreview.style.filter = '';
+};
+
+effects.addEventListener('change', ({ target }) => {
+  currentEffect = target.value;
+  if (currentEffect === Effects.DEFAULT) {
+    resetEffects();
+  } else {
+    updateSlider();
+    showSlider();
   }
 });
 
-// Обработчик переключения эффектов
-document.querySelectorAll('input[name="effect"]').forEach((input) => {
-  input.addEventListener('change', (evt) => {
-    applyEffect(evt.target.value);
-  });
-});
+resetEffects();
 
-// Инициализация по умолчанию
-applyEffect('original');

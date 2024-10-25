@@ -1,17 +1,17 @@
-// Найдем элементы для работы с полноразмерным изображением и комментариями
+import { removeEscapeControl, setEscapeControl } from './escape-control.js';
+import {COMMENTS_STEP} from './constants.js';
+
 const bigPictureElement = document.querySelector('.big-picture');
 const commentsList = bigPictureElement.querySelector('.social__comments');
-const commentCountElement = bigPictureElement.querySelector('.social__comment-count');
+const commentCountElement = bigPictureElement.querySelector('.social__comment-shown-count');
+const totalCommentCountElement = bigPictureElement.querySelector('.social__comment-total-count');
 const commentsLoader = bigPictureElement.querySelector('.comments-loader');
 const closeButton = bigPictureElement.querySelector('.big-picture__cancel');
-const bigPictureOverlay = bigPictureElement.querySelector('.big-picture__preview'); // область модального окна
+const bigPictureOverlay = bigPictureElement.querySelector('.big-picture__preview');
 
-// Константы для показа по 5 комментариев
-const COMMENTS_STEP = 5;
 let visibleCommentsCount = 0;
 let comments = [];
 
-// Функция для создания элемента комментария
 const createCommentElement = ({ avatar, message, name }) => {
   const commentElement = document.createElement('li');
   commentElement.classList.add('social__comment');
@@ -29,7 +29,6 @@ const createCommentElement = ({ avatar, message, name }) => {
   return commentElement;
 };
 
-// Функция для отрисовки комментариев (по шагу COMMENTS_STEP)
 const renderComments = () => {
   const fragment = document.createDocumentFragment();
   const commentsToShow = comments.slice(visibleCommentsCount, visibleCommentsCount + COMMENTS_STEP);
@@ -42,74 +41,59 @@ const renderComments = () => {
   commentsList.append(fragment);
   visibleCommentsCount += commentsToShow.length;
 
-  // Обновляем счетчик комментариев
-  commentCountElement.textContent = `${visibleCommentsCount} из ${comments.length} комментариев`;
+  commentCountElement.textContent = visibleCommentsCount;
+  totalCommentCountElement.textContent = comments.length;
 
-  // Скрываем кнопку загрузки комментариев, если все комментарии отображены
   if (visibleCommentsCount >= comments.length) {
     commentsLoader.classList.add('hidden');
   }
 };
 
-// Функция для открытия полноразмерного изображения
 const openBigPicture = ({ url, likes, comments: newComments, description }) => {
-  // Сбрасываем переменные
   visibleCommentsCount = 0;
   comments = newComments;
 
-  // Показываем окно с изображением
   bigPictureElement.classList.remove('hidden');
 
-  // Удаляем старые комментарии
   commentsList.innerHTML = '';
 
-  // Показываем блоки комментариев и кнопки загрузки
   commentCountElement.classList.remove('hidden');
   commentsLoader.classList.remove('hidden');
 
-  // Устанавливаем основную информацию для изображения
   bigPictureElement.querySelector('.big-picture__img img').src = url;
   bigPictureElement.querySelector('.likes-count').textContent = likes;
   bigPictureElement.querySelector('.social__caption').textContent = description;
 
-  // Рендерим первые комментарии
   renderComments();
 
-  // Добавляем тегу <body> класс, чтобы отключить прокрутку
   document.body.classList.add('modal-open');
 
-  // Добавляем обработчики событий
-  closeButton.addEventListener('click', closeBigPicture); // Закрытие по кнопке
-  commentsLoader.addEventListener('click', renderComments); // Загрузка комментариев
-  document.addEventListener('keydown', onEscPress); // Закрытие по Esc
-  bigPictureElement.addEventListener('click', onOutsideClick); // Закрытие по клику вне модалки
+  closeButton.addEventListener('click', onCloseButtonClick);
+  commentsLoader.addEventListener('click', renderComments);
+  bigPictureElement.addEventListener('click', onOutsideClick);
+
+  setEscapeControl(closeBigPicture);
 };
 
-// Функция для закрытия полноразмерного изображения
-const closeBigPicture = () => {
+function onCloseButtonClick(){
+  closeBigPicture();
+  removeEscapeControl();
+}
+
+function closeBigPicture(){
   bigPictureElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
-  // Убираем обработчики
   closeButton.removeEventListener('click', closeBigPicture);
   commentsLoader.removeEventListener('click', renderComments);
-  document.removeEventListener('keydown', onEscPress);
   bigPictureElement.removeEventListener('click', onOutsideClick);
-};
+}
 
-// Обработчик для нажатия клавиши Esc
-const onEscPress = (evt) => {
-  if ((evt.keyCode === 27)) {
-    closeBigPicture();
-  }
-};
-
-// Обработчик для клика вне модального окна
-const onOutsideClick = (evt) => {
-  // Если кликнули не по модальной части, закрываем окно
+function onOutsideClick(evt) {
   if (!bigPictureOverlay.contains(evt.target)) {
     closeBigPicture();
+    removeEscapeControl();
   }
-};
+}
 
 export { openBigPicture };

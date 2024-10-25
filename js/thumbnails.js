@@ -14,21 +14,19 @@ const createThumbnails = (photos) => {
     thumbnailElement.querySelector('.picture__likes').textContent = likes;
     thumbnailElement.querySelector('.picture__comments').textContent = comments.length;
 
-    // Добавляем обработчик клика на миниатюру
     thumbnailElement.addEventListener('click', () => {
       openBigPicture({ url, likes, comments, description });
     });
-
     fragment.append(thumbnailElement);
   });
   thumbnailListElement.append(fragment);
 };
 
-// Функция для отрисовки миниатюр, используемая при фильтрации
 const renderPhotos = (photos) => {
-  thumbnailListElement.innerHTML = ''; // Очищаем контейнер перед отрисовкой
-  createThumbnails(photos); // Используем ту же логику
+  document.querySelectorAll('.picture').forEach((item) => {
+    item.remove();
+  });
+  createThumbnails(photos);
 };
 
-// Экспортируем обе функции
 export { createThumbnails, renderPhotos };

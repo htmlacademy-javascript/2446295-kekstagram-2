@@ -1,52 +1,48 @@
-import { renderPhotos } from './thumbnails.js'; // Импорт функции отрисовки миниатюр
+import { renderPhotos } from './thumbnails.js';
+import { debounce } from './util.js';
+import { FILTERS, DEFAULT_PHOTOS_COUNT, RANDOM_PHOTOS_COUNT } from './constants.js';
 
+const filtersForm = document.querySelector('.img-filters__form');
 const imgFilters = document.querySelector('.img-filters');
-let currentFilter = 'filter-default';
-const DEFAULT_PHOTOS_COUNT = 25;
-const RANDOM_PHOTOS_COUNT = 10;
 
-const showFilters = () => {
-  imgFilters.classList.remove('img-filters--inactive');
+let currentFilter = FILTERS.DEFAULT;
+let localData;
+
+const sortByComments = (photos) => [...photos].sort((a, b) => b.comments.length - a.comments.length);
+
+const getRandomPhotos = (photos) => [...photos].sort(() => 0.5 - Math.random()).slice(0, RANDOM_PHOTOS_COUNT);
+
+const filterPhotos = {
+  [FILTERS.DEFAULT]: () => localData.slice(0, DEFAULT_PHOTOS_COUNT),
+  [FILTERS.RANDOM]: () => getRandomPhotos(localData),
+  [FILTERS.DISCUSSED]: () => sortByComments(localData)
 };
 
-const debounce = (callback, delay) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => callback.apply(this, args), delay);
-  };
+const setActiveButton = (button) => {
+  document.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
+  button.classList.add('img-filters__button--active');
 };
 
-const sortByComments = (photos) => photos.slice().sort((a, b) => b.comments.length - a.comments.length);
-
-const getRandomPhotos = (photos) => {
-  const shuffledPhotos = photos.slice().sort(() => 0.5 - Math.random());
-  return shuffledPhotos.slice(0, RANDOM_PHOTOS_COUNT);
-};
-
-const filterPhotos = (filterName, photos) => {
-  switch (filterName) {
-    case 'filter-default':
-      return photos.slice(0, DEFAULT_PHOTOS_COUNT);
-    case 'filter-random':
-      return getRandomPhotos(photos);
-    case 'filter-discussed':
-      return sortByComments(photos);
-    default:
-      return photos.slice(0, DEFAULT_PHOTOS_COUNT);
+filtersForm.addEventListener('click', (evt) => {
+  if (evt.target.classList.contains('img-filters__button')) {
+    setActiveButton(evt.target);
   }
-};
+});
 
-const onFilterChange = debounce((evt, photos) => {
+filtersForm.addEventListener('click', debounce((evt) => {
   if (evt.target.classList.contains('img-filters__button')) {
     const selectedFilter = evt.target.id;
     if (selectedFilter !== currentFilter) {
       currentFilter = selectedFilter;
-      document.querySelectorAll('.picture').forEach((picture) => picture.remove());
-      const filteredPhotos = filterPhotos(selectedFilter, photos);
+      const filteredPhotos = filterPhotos[selectedFilter]();
       renderPhotos(filteredPhotos);
     }
   }
-}, 500);
+}));
 
-export { showFilters, onFilterChange };
+const showFilters = (photos) => {
+  imgFilters.classList.remove('img-filters--inactive');
+  localData = [...photos];
+};
+
+export { showFilters };

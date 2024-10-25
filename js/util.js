@@ -1,18 +1,21 @@
-const getId = () => {
-  let lastGeneratedId = 0;
-  return function () {
-    lastGeneratedId += 1;
-    return lastGeneratedId;
+const errorBlock = document.querySelector('#data-error').content.querySelector('.data-error');
+
+export const showAlert = (message = 'Что-то пошло не так. Приходите завтра', time = 5000) => {
+  const alertContainer = errorBlock.cloneNode(true);
+  alertContainer.querySelector('.data-error__title').textContent = message;
+
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, time);
+};
+
+export const debounce = (callback, delay = 500) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => callback.apply(this, args), delay);
   };
 };
 
-const getRandomInteger = (min, max) => {
-  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
-  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
-};
-
-const getRandomArrayElement = (items) => items[getRandomInteger(0, items.length - 1)];
-
-export {getId, getRandomInteger, getRandomArrayElement};
