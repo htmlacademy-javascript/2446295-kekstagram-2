@@ -25,7 +25,6 @@ const showPopup = (type) => {
 
   popup.addEventListener('click', (evt) => {
     removePopup(evt);
-    
   });
 };
 
