@@ -1,5 +1,5 @@
 import { removeEscapeControl, setEscapeControl } from './escape-control.js';
-import {COMMENTS_STEP} from './constants.js';
+import { COMMENTS_STEP, AVATAR_WIDTH, AVATAR_HEIGHT } from './constants.js';
 
 const bigPictureElement = document.querySelector('.big-picture');
 const commentsList = bigPictureElement.querySelector('.social__comments');
@@ -16,15 +16,19 @@ const createCommentElement = ({ avatar, message, name }) => {
   const commentElement = document.createElement('li');
   commentElement.classList.add('social__comment');
 
-  commentElement.innerHTML = `
-    <img
-      class="social__picture"
-      src="${avatar}"
-      alt="${name}"
-      width="35"
-      height="35">
-    <p class="social__text">${message}</p>
-  `;
+  const avatarElement = document.createElement('img');
+  avatarElement.classList.add('social__picture');
+  avatarElement.src = avatar;
+  avatarElement.alt = name;
+  avatarElement.width = AVATAR_WIDTH;
+  avatarElement.height = AVATAR_HEIGHT;
+
+  const messageElement = document.createElement('p');
+  messageElement.classList.add('social__text');
+  messageElement.textContent = message;
+
+  commentElement.appendChild(avatarElement);
+  commentElement.appendChild(messageElement);
 
   return commentElement;
 };

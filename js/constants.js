@@ -47,3 +47,6 @@ export const MAX_SCALE = 100;
 export const STEP_SCALE = 25;
 export const DEFAULT_SCALE = MAX_SCALE;
 export const SCALE_FACTOR = 0.01;
+
+export const AVATAR_WIDTH = 35;
+export const AVATAR_HEIGHT = 35;
